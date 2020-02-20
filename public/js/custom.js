@@ -12,7 +12,7 @@ function ViewModel() {
         }
     ]);
 
-    self.phones = ko.observableArray([{phone: null}]);
+    self.phones = ko.observableArray([{phone: null, type: null}]);
 
     self.addAddress = function() {
         self.addresses.push({
@@ -30,7 +30,7 @@ function ViewModel() {
     }
 
     self.addPhone = function() {
-        self.phones.push({phone: null});
+        self.phones.push({phone: null, type: null});
     };
 
     self.removePhone = function() {
@@ -39,3 +39,12 @@ function ViewModel() {
 }
 
 ko.applyBindings(new ViewModel());
+
+$(document).ready(function () {
+    $('.date').mask('99/99/9999');
+    $('.phone').mask('(99) 99999-9999');
+
+    setTimeout(function () {
+        $('#alert').removeClass('alert-danger alert-success')
+    }, 3000)
+})

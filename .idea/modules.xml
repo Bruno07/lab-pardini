@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/lab-pardini.iml" filepath="$PROJECT_DIR$/.idea/lab-pardini.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../wittec-app/.idea/wittec-app.iml" filepath="$PROJECT_DIR$/../wittec-app/.idea/wittec-app.iml" />
     </modules>
   </component>
 </project>

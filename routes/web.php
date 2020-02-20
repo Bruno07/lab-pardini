@@ -11,6 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
+Route::group(['prefix' => '/'], function () {
+    Route::get('/', 'PatientController@create');
+    Route::get('/patients', 'PatientController@index');
+    Route::post('/patients/', 'PatientController@store');
+    Route::get('/edit/{id}', 'PatientController@edit');
 });
