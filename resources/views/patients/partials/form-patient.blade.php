@@ -19,7 +19,7 @@
 
     <div class="form-group col-md-4">
         <label for="exampleInputEmail1">Sobrenome</label>
-        <input type="text" name="patient[lastname]" class="form-control @error('patient.lastname') is-invalid @enderror" value="{{ $patient->lastname ?? old('patient.lastname') }}" required>
+        <input type="text" name="patient[lastname]" class="form-control @error('patient.lastname') is-invalid @enderror" value="{{ $patient->lastName ?? old('patient.lastname') }}" required>
 
         @error('patient.lastname')
             <span class="invalid-feedback" role="alert">
@@ -30,7 +30,7 @@
 
     <div class="form-group col-md-2">
         <label>Nascimento</label>
-        <input type="text" name="patient[birth]" class="form-control date @error('patient.birth') is-invalid @enderror" value="{{ $patient->birth ?? old('patient.birth') }}" required>
+        <input type="text" name="patient[birth]" class="form-control date @error('patient.birth') is-invalid @enderror" value="{{ isset($patient->birth) ? \Carbon\Carbon::parse($patient->birth)->format('d/m/Y') : old('patient.birth') }}" required>
 
         @error('patient.birth')
             <span class="invalid-feedback" role="alert">
@@ -65,7 +65,8 @@
     <div class="form-row">
         <div class="form-group col-md-1">
             <label>CEP</label>
-            <input type="text" class="form-control @error('addresses.*.postal_code') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][postal_code]'}" required>
+            <input type="hidden" class="form-control" data-bind="attr: {'value': id, 'name': 'addresses['+$index()+'][id]'}">
+            <input type="text" class="pc form-control @error('addresses.*.postal_code') is-invalid @enderror" data-bind="attr: {'value': postal_code, 'name': 'addresses['+$index()+'][postal_code]'}" required>
 
             @error('addresses.*.postal_code')
                 <span class="invalid-feedback" role="alert">
@@ -76,7 +77,7 @@
 
         <div class="form-group col-md-3">
             <label>Endereço</label>
-            <input type="text" class="form-control @error('addresses.*.address') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][address]'}" required>
+            <input type="text" class="address form-control @error('addresses.*.address') is-invalid @enderror" data-bind="attr: {'value': address,  'name': 'addresses['+$index()+'][address]'}" required>
 
             @error('addresses.*.address')
                 <span class="invalid-feedback" role="alert">
@@ -87,7 +88,7 @@
 
         <div class="form-group col-md-1">
             <label>Número</label>
-            <input type="text" class="form-control @error('addresses.*.number') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][number]'}" required>
+            <input type="text" class="number form-control @error('addresses.*.number') is-invalid @enderror" data-bind="attr: {'value': number,  'name': 'addresses['+$index()+'][number]'}" required>
 
             @error('addresses.*.number')
                 <span class="invalid-feedback" role="alert">
@@ -98,7 +99,7 @@
 
         <div class="form-group col-md-3">
             <label>Bairro</label>
-            <input type="text" class="form-control @error('addresses.*.neighborhood') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][neighborhood]'}" required>
+            <input type="text" class="neighborhood form-control @error('addresses.*.neighborhood') is-invalid @enderror" data-bind="attr: {'value': neighborhood,  'name': 'addresses['+$index()+'][neighborhood]'}" required>
 
             @error('addresses.*.neighborhood')
                 <span class="invalid-feedback" role="alert">
@@ -109,7 +110,7 @@
 
         <div class="form-group col-md-2">
             <label>Cidade</label>
-            <input type="text" class="form-control @error('addresses.*.town') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][town]'}" required>
+            <input type="text" class="town form-control @error('addresses.*.town') is-invalid @enderror" data-bind="attr: {'value': town,  'name': 'addresses['+$index()+'][town]'}" required>
 
             @error('addresses.*.town')
                 <span class="invalid-feedback" role="alert">
@@ -120,7 +121,7 @@
 
         <div class="form-group col-md-1">
             <label>Estado</label>
-            <input type="text" class="form-control @error('addresses.*.state') is-invalid @enderror" data-bind="attr: {'name': 'addresses['+$index()+'][state]'}" required>
+            <input type="text" class=" state form-control @error('addresses.*.state') is-invalid @enderror" data-bind="attr: {'value': state, 'name': 'addresses['+$index()+'][state]'}" required>
 
             @error('addresses.*.state')
                 <span class="invalid-feedback" role="alert">
@@ -129,7 +130,7 @@
             @enderror
         </div>
 
-        <div class="form-group col-md-1" data-bind="visible: $parent.addresses().length > 1">
+        <div class="form-group col-md-1" data-bind="visible: $parent.addresses().length > {{max(count($patient->addresses->data ?? 1), 1)}}">
             <button type="button" class="btn btn-primary" data-bind="click: $parent.removeAddress">
                 <i class="fa fa-trash"></i>
             </button>
@@ -145,11 +146,12 @@
     </div>
 </div>
 
-<div data-bind="foreach: phones.slice(0,6)">
+<div id="display" data-bind="foreach: phones.slice(0,6)">
     <div class="form-row">
         <div class="form-group col-md-4">
             <label>Telefone</label>
-            <input type="text" class="form-control phone @error('contacts.*.number') is-invalid @enderror" data-bind="attr: {'name': 'contacts['+$index()+'][number]'}" required>
+            <input type="hidden" class="form-control" data-bind="attr: {'value': id, 'name': 'contacts['+$index()+'][id]'}">
+            <input type="text" class="form-control phone @error('contacts.*.number') is-invalid @enderror" data-bind="attr: {'value': number, 'name': 'contacts['+$index()+'][number]'}" required>
 
             @error('contacts.*.number')
                 <span class="invalid-feedback" role="alert">
@@ -160,7 +162,7 @@
 
         <div class="form-group col-md-4">
             <label>Tipo</label>
-            <select class="form-control @error('contacts.*.type') is-invalid @enderror" name="type" data-bind="attr: {'name': 'contacts['+$index()+'][type]'}">
+            <select class="form-control @error('contacts.*.type') is-invalid @enderror" name="type" data-bind="attr: {'value': type,'name': 'contacts['+$index()+'][type]'}">
                 @foreach($phone_types as $type)
                     <option value="{{ $type }}">{{ $type }}</option>
                 @endforeach
@@ -173,7 +175,7 @@
             @enderror
         </div>
 
-        <div class="form-group col-md-1" data-bind="visible: $parent.phones().length > 1">
+        <div class="form-group col-md-1" data-bind="visible: $parent.phones().length > {{max(count($patient->contacts->data ?? 1), 1)}}">
             <button type="button" class="btn btn-primary" data-bind="click: $parent.removePhone">
                 <i class="fa fa-trash"></i>
             </button>

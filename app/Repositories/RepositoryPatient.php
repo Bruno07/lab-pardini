@@ -52,15 +52,14 @@ class RepositoryPatient
     /**
      * @param array $data
      * @param Patient $patient
-     * @param null $id
      * @return void
      */
-    public function savePatientAddress(array $data, Patient $patient, $id = null)
+    public function savePatientAddress(array $data, Patient $patient)
     {
         $patientAddress = new PatientAddress;
 
-        if (! empty($id))
-            $patientAddress = PatientAddress::findOrFail($id);
+        if (data_get($data, 'id', false))
+            $patientAddress = PatientAddress::findOrFail($data['id']);
 
         $patientAddress->postal_code = $data['postal_code'];
         $patientAddress->address = $data['address'];
@@ -77,15 +76,14 @@ class RepositoryPatient
     /**
      * @param array $data
      * @param Patient $patient
-     * @param null $id
      * @return void
      */
-    public function savePatientContact(array $data, Patient $patient, $id = null)
+    public function savePatientContact(array $data, Patient $patient)
     {
         $patientContact = new PatientContact;
 
-        if (! empty($id))
-            $patientContact = PatientContact::findOrFail($id);
+        if (data_get($data, 'id', false))
+            $patientContact = PatientContact::findOrFail($data['id']);
 
         $patientContact->number = $data['number'];
         $patientContact->type = $data['type'];

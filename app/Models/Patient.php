@@ -35,4 +35,12 @@ class Patient extends Model
         $this->attributes['birth'] = \Carbon\Carbon::createFromFormat('d/m/Y', $value)
             ->toDateString();
     }
+
+    /**
+     * @return string
+     */
+    public function getFullNameAttribute()
+    {
+        return "{$this->name} {$this->last_name}";
+    }
 }

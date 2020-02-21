@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use GuzzleHttp\Client;
 use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\RequestPatient;
@@ -15,6 +14,16 @@ use Illuminate\Contracts\Foundation\Application;
 class PatientController extends Controller
 {
     /**
+     * @var Client
+     */
+    private $client;
+
+    /**
+     * @var mixed
+     */
+    private $url;
+
+    /**
      * @var RepositoryPatient
      */
     private $repository;
@@ -22,26 +31,76 @@ class PatientController extends Controller
     /**
      * PatientController constructor.
      * @param RepositoryPatient $repository
+     * @param Client $client
      */
-    public function __construct(RepositoryPatient $repository)
+    public function __construct(RepositoryPatient $repository, Client $client)
     {
+        $this->client = $client;
+        $this->url = env('API_URL');
         $this->repository = $repository;
     }
 
     /**
-     * @return JsonResponse
+     * @return Factory|View
      */
     public function index()
     {
-        $client = new Client;
-
-        $patients = $client->request('GET', '127.0.0.1:8004/api/patients', [
+        $patients = $this->client->request('GET', "{$this->url}/api/patients", [
             'headers' => [
                 'Accept' => 'application/json',
             ]
         ]);
 
-        return (string)$patients->getBody();
+        $patients = json_decode((string)$patients->getBody());
+
+        return view('patients.list', compact('patients'));
+    }
+
+    /**
+     * @param $id
+     * @return Application|Factory|View
+     */
+    public function show($id)
+    {
+        $patient = $this->client->request('GET', "{$this->url}/api/patients/{$id}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ]
+        ]);
+
+        $patient = json_decode((string)$patient->getBody());
+
+        return view('patients.show', compact('patient'));
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function showAddresses($id)
+    {
+        $patient = $this->client->request('GET', "{$this->url}/api/patients/{$id}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ]
+        ]);
+
+        return (string)$patient->getBody();
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function showContacts($id)
+    {
+        $patient = $this->client->request('GET', "{$this->url}/api/patients/{$id}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ]
+        ]);
+
+        return (string)$patient->getBody();
     }
 
     /**
@@ -87,22 +146,45 @@ class PatientController extends Controller
      */
     public function edit($id)
     {
-        $patient = $this->repository->find($id);
+        $patient = $this->client->request('GET', "{$this->url}/api/patients/{$id}", [
+            'headers' => [
+                'Accept' => 'application/json',
+            ]
+        ]);
 
-        if ($patient)
-            return view('patients.edit', compact('patient'));
+        $patient = json_decode((string)$patient->getBody());
 
-        return back()->with(['class' => 'danger', 'status' => 'Ops, não conseguimos encontrar esse paciênte']);
+        return view('patients.edit', compact('patient'));
     }
 
     /**
      * @param RequestPatient $request
      * @param int $id
-     * @return void
+     * @return RedirectResponse
      */
     public function update(RequestPatient $request, $id)
     {
-        //
+        try {
+            $data = $request->except('_token');
+
+            DB::beginTransaction();
+
+            $patient = $this->repository->savePatient($data['patient'], $id);
+
+            foreach ($data['addresses'] as $dataAddress)
+                $this->repository->savePatientAddress($dataAddress, $patient);
+
+            foreach ($data['contacts'] as $dataContact)
+                $this->repository->savePatientContact($dataContact, $patient);
+
+            DB::commit();
+
+            return back()->with(['class' => 'success', 'status' => 'Paciênte alterado com sucesso']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with(['class' => 'danger', 'status' => $e->getMessage()]);
+        }
     }
 
     /**

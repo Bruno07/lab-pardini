@@ -16,4 +16,5 @@ use Illuminate\Http\Request;
 
 Route::group(['prefix' => '/patients'], function () {
     Route::get('/', 'Api\PatientController@index');
+    Route::get('/{id}', 'Api\PatientController@show');
 });

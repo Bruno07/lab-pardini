@@ -17,12 +17,14 @@
                         </div>
                     @endif
 
-                    <form id="form-patient" action="/patients" method="post">
+                    <form id="form-patient" action="/patients/{{$patient->data->id}}" method="post" data-id="{{$patient->data->id}}">
                         @csrf
-                        @include('patients.partials.form-patient')
+                        @method('put')
 
-                        <button type="reset" class="btn btn-primary">Limpar</button>
+                        @include('patients.partials.form-patient', ['patient' => $patient->data])
+
                         <button type="submit" class="btn btn-primary"><i class="fa fa-pencil"></i> Salvar</button>
+                        <a href="/patients" class="btn btn-primary"><i class="fa fa-chevron-left"></i> Voltar</a>
                     </form>
                 </div>
             </div>

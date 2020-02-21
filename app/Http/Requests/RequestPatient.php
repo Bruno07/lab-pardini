@@ -29,7 +29,7 @@ class RequestPatient extends FormRequest
             'patient.birth' => "required|date_format:d/m/Y",
             'patient.email' => 'required|max:200',
             'addresses.*.postal_code' => 'required|max:25',
-            'addresses.*.address' => 'required|max:25',
+            'addresses.*.address' => 'required|max:100',
             'addresses.*.number' => 'required|max:10',
             'addresses.*.neighborhood' => 'required|max:100',
             'addresses.*.town' => 'required|max:100',
