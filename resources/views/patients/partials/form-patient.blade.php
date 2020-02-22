@@ -130,7 +130,7 @@
             @enderror
         </div>
 
-        <div class="form-group col-md-1" data-bind="visible: $parent.addresses().length > {{max(count($patient->addresses->data ?? 1), 1)}}">
+        <div class="form-group col-md-1" data-bind="visible: $parent.addresses().length > {{max(count($patient->addresses->data ?? []), 1)}}">
             <button type="button" class="btn btn-primary" data-bind="click: $parent.removeAddress">
                 <i class="fa fa-trash"></i>
             </button>
@@ -175,7 +175,7 @@
             @enderror
         </div>
 
-        <div class="form-group col-md-1" data-bind="visible: $parent.phones().length > {{max(count($patient->contacts->data ?? 1), 1)}}">
+        <div class="form-group col-md-1" data-bind="visible: $parent.phones().length > {{max(count($patient->contacts->data ?? []), 1)}}">
             <button type="button" class="btn btn-primary" data-bind="click: $parent.removePhone">
                 <i class="fa fa-trash"></i>
             </button>

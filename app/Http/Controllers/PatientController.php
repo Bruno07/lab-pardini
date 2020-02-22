@@ -132,7 +132,7 @@ class PatientController extends Controller
 
             DB::commit();
 
-            return back()->with(['class' => 'success', 'status' => 'Paciênte cadastrado com sucesso']);
+            return back()->with(['class' => 'success', 'status' => 'Paciente cadastrado com sucesso']);
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -179,7 +179,7 @@ class PatientController extends Controller
 
             DB::commit();
 
-            return back()->with(['class' => 'success', 'status' => 'Paciênte alterado com sucesso']);
+            return back()->with(['class' => 'success', 'status' => 'Dados alterado com sucesso']);
 
         } catch (\Exception $e) {
             DB::rollBack();
